@@ -8,30 +8,59 @@ namespace bank_account
 {
     internal class Program
     {
-        public class Bank_Account
+
+        public static void Main(string[] args)
         {
-            private string name;
-            private string ssn;
-            private double balance;
-            private string date;
-            private string aba;
+            bool keep_registering;
+            string input;
 
-            public string SSN
+            List<Account> accountList = new List<Account>();
+
+            do
             {
-                get { return ssn; }
-                set
+                Console.WriteLine("Would you like to create a new account?");
+                Console.WriteLine("1) Yes\n2) No");
+                input = Console.ReadLine();
+                Console.Clear();
+                switch (input.ToLower())
                 {
-                    if (int.TryParse(value, out int validSSN) & value.Length == 9)
-                    {
-                        ssn = Convert.ToString(validSSN);
-                    }
-                    else
-                    {
-                        ssn = null;
-                    }
-                }
-            }
+                    case "yes":
+                    case "1":
+                        keep_registering = true;
+                        Account newAccount = new Account();
+                        newAccount.createAccount();
+                        break;
+                    case "no":
+                    case "2":
+                        keep_registering = false;
+                        if (accountList.Count > 0)
+                        {
+                            Console.WriteLine("Here's a list of all new created accounts:\n");
 
+                            foreach (Account account in accountList)
+                            {
+                                account.displayAccount();
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine("Thank you! Please enter any key to exit.");
+                            Console.ReadKey();
+                            Environment.Exit(0);
+                        }
+                        break;
+
+                    default:
+                        keep_registering = true;
+                        Console.WriteLine("Invalid input. Please enter a valid option (1 or 2).");
+                        System.Threading.Thread.Sleep(2000);
+                        Console.Clear();
+                        break;
+                }
+            } while (keep_registering);
+
+            Console.WriteLine("\nThank you for using our services! Press any key to exit.");
+            Console.ReadKey();
         }
     }
 }
