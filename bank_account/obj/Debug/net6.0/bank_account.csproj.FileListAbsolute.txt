@@ -1,0 +1,5 @@
+C:\Users\sis\Documents\iury\bank_account\bank_account\obj\Debug\net6.0\bank_account.csproj.AssemblyReference.cache
+C:\Users\sis\Documents\iury\bank_account\bank_account\obj\Debug\net6.0\bank_account.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\sis\Documents\iury\bank_account\bank_account\obj\Debug\net6.0\bank_account.AssemblyInfoInputs.cache
+C:\Users\sis\Documents\iury\bank_account\bank_account\obj\Debug\net6.0\bank_account.AssemblyInfo.cs
+C:\Users\sis\Documents\iury\bank_account\bank_account\obj\Debug\net6.0\bank_account.csproj.CoreCompileInputs.cache
