@@ -18,7 +18,7 @@ namespace bank_account
             do
             {
                 Console.WriteLine("Would you like to create a new account?");
-                Console.WriteLine("1) Yes\n2) No");
+                Console.WriteLine("\n1) Yes\n2) No");
                 input = Console.ReadLine();
                 Console.Clear();
                 switch (input.ToLower())
@@ -46,7 +46,48 @@ namespace bank_account
                 }
             } while (!isEntryValid);
 
-            bool keepUsing; // Used to check whether the user wants to do another operation after his first one or not.
+            do
+            {
+                Console.WriteLine("Choose an account type:");
+                Console.WriteLine("\n1) Savings\n2) Current\n3) Teen (underage user)\n4) Exit");
+                input = Console.ReadLine();
+                Console.Clear();
+                switch (input.ToLower())
+                {
+                    case "savings":
+                    case "1":
+                        isEntryValid = true;
+                        account.SavingsAccount
+                        break;
+
+                    case "current":
+                    case "2":
+                        isEntryValid = true;
+                        break;
+
+                    case "teen":
+                    case "3":
+                        isEntryValid = true;
+                        break;
+
+                    case "exit":
+                    case "4":
+                        isEntryValid = true;
+                        Console.WriteLine("\nThank you for using our services! Enter any key to exit.");
+                        Console.ReadKey();
+                        Environment.Exit(0);
+                        break;
+
+                    default:
+                        isEntryValid = false;
+                        Console.WriteLine("Invalid input. Please enter a valid option (1, 2, 3 or 4).");
+                        System.Threading.Thread.Sleep(2000);
+                        Console.Clear();
+                        break;
+                }
+            } while (!isEntryValid);
+
+                bool keepUsing; // Used to check whether the user wants to do another operation after his first one or not.
 
             do // One bigger loop to be repeated in case user wants to do another operation.
                // Two smaller loops: one for operation choosing and another for deciding wheteher or not user wants to do another operation.
