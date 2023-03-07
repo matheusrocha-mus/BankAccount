@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Globalization;
 
 namespace bank_account
 {
@@ -12,6 +13,7 @@ namespace bank_account
         private string password;
         private string ssn;
         private DateTime dateBirth;
+        private int age;
         private double balance;
         private DateTime dateCreation;
         private string aba;
@@ -68,6 +70,31 @@ namespace bank_account
         public DateTime DateBirth
         {
             get { return dateBirth; }
+            set
+            {
+                if (DateTime.TryParseExact(value, "MM/dd/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime validBirthDate))
+                {
+                    dateBirth = validBirthDate;
+                }
+
+                else
+                {
+                    dateBirth = null;
+                }
+            }
+        }
+
+        public int Age
+        {
+            get { return age; }
+            set
+            {
+                age = (int)((DateTime.Now - dateBirth).TotalDays / 365.25);
+                if (age < 18)
+                {
+                    Console.WriteLine("You must be at least 18 years old to create an account.");
+                }
+            }
         }
 
         public double Balance
@@ -102,7 +129,7 @@ namespace bank_account
             Console.Clear();
 
             Console.WriteLine("Enter the account owner's password:");
-            while (Password == null) // password will be asked from the user again if entry is not valid.
+            while (Password == null) // Password will be asked from the user again if entry is not valid.
             {
                 Password = Console.ReadLine();
                 if (Password == null)
@@ -112,6 +139,21 @@ namespace bank_account
                     System.Threading.Thread.Sleep(2000);
                     Console.Clear();
                     Console.WriteLine("Enter the account owner's password:");
+                }
+            }
+            Console.Clear();
+
+            Console.Write("Enter your date of birth (MM/DD/YYYY):");
+            while (DateBirth == null) // Date of birth will be asked from the user again if entry is not valid.
+            {
+                DateBirth = Console.ReadLine().Trim();
+                if (DateBirth == null)
+                {
+                    Console.Clear();
+                    Console.WriteLine("Invalid date of birth format. Please enter in the format MM/DD/YYYY.");
+                    System.Threading.Thread.Sleep(2000);
+                    Console.Clear();
+                    Console.WriteLine("Enter your date of birth (MM/DD/YYYY):");
                 }
             }
             Console.Clear();
@@ -131,11 +173,11 @@ namespace bank_account
             }
             Console.Clear();
 
-            this.Balance = 0; // Sets inicial bank account balance as $0.00.
+            Balance = 0; // Sets inicial bank account balance as $0.00.
 
-            this.DateCreation = DateTime.Now; // `DateTime.Now displays current day, month, year, hour, minutes and seconds when it's called.
+            this.dateCreation = DateTime.Now; // `DateTime.Now displays current day, month, year, hour, minutes and seconds when it's called.
 
-            this.ABA = "";
+            this.ABA = "Viado";
         }
 
         public void DisplayAccount()
@@ -143,6 +185,8 @@ namespace bank_account
             Console.WriteLine("Name: " + Name);
             Console.WriteLine("Password: " + Password);
             Console.WriteLine("SSN: " + SSN);
+            Console.WriteLine("Date of birth: " + DateBirth.ToString("MM/dd/yyyy"));
+            Console.WriteLine("Age: " + Age);
             Console.WriteLine("Balance: $" + Balance.ToString("0.00"));
             Console.WriteLine("Creation date: " + DateCreation);
             Console.WriteLine("ABA: " + ABA);
