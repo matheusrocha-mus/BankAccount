@@ -12,7 +12,7 @@ namespace bank_account
         private string name;
         private string password;
         private string ssn;
-        private DateTime dateBirth;
+        private DateTime? dateBirth;
         private int age;
         private double balance;
         private DateTime dateCreation;
@@ -67,19 +67,32 @@ namespace bank_account
             }
         }
 
-        public DateTime DateBirth
+        private DateTime? ValidateDateOfBirth(string input)
+        {
+            if (DateTime.TryParseExact(input, "MM/dd/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime validBirthDate))
+            {
+                return validBirthDate;
+            }
+            else
+            {
+                Console.Clear();
+                Console.WriteLine("Invalid date of birth format. Please enter in the format MM/DD/YYYY.");
+                System.Threading.Thread.Sleep(2000);
+                Console.Clear();
+                Console.Write("Enter your date of birth (MM/DD/YYYY): ");
+                return null;
+            }
+        }
+
+        public DateTime? DateBirth
         {
             get { return dateBirth; }
             set
             {
-                if (DateTime.TryParseExact(value, "MM/dd/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime validBirthDate))
+                dateBirth = ValidateDateOfBirth(value.ToString());
+                if (dateBirth != null)
                 {
-                    dateBirth = validBirthDate;
-                }
-
-                else
-                {
-                    dateBirth = null;
+                    Age = (int)((DateTime.Now - dateBirth).TotalDays / 365.25);
                 }
             }
         }
@@ -89,7 +102,7 @@ namespace bank_account
             get { return age; }
             set
             {
-                age = (int)((DateTime.Now - dateBirth).TotalDays / 365.25);
+                Age = (int)((DateTime.Now - dateBirth).TotalDays / 365.25);
                 if (age < 18)
                 {
                     Console.WriteLine("You must be at least 18 years old to create an account.");
@@ -146,15 +159,7 @@ namespace bank_account
             Console.Write("Enter your date of birth (MM/DD/YYYY):");
             while (DateBirth == null) // Date of birth will be asked from the user again if entry is not valid.
             {
-                DateBirth = Console.ReadLine().Trim();
-                if (DateBirth == null)
-                {
-                    Console.Clear();
-                    Console.WriteLine("Invalid date of birth format. Please enter in the format MM/DD/YYYY.");
-                    System.Threading.Thread.Sleep(2000);
-                    Console.Clear();
-                    Console.WriteLine("Enter your date of birth (MM/DD/YYYY):");
-                }
+                DateBirth = ValidateDateOfBirth(Console.ReadLine().Trim());
             }
             Console.Clear();
 
@@ -177,7 +182,7 @@ namespace bank_account
 
             this.dateCreation = DateTime.Now; // `DateTime.Now displays current day, month, year, hour, minutes and seconds when it's called.
 
-            this.ABA = "Viado";
+            this.ABA = "";
         }
 
         public void DisplayAccount()
@@ -185,7 +190,7 @@ namespace bank_account
             Console.WriteLine("Name: " + Name);
             Console.WriteLine("Password: " + Password);
             Console.WriteLine("SSN: " + SSN);
-            Console.WriteLine("Date of birth: " + DateBirth.ToString("MM/dd/yyyy"));
+            Console.WriteLine("Date of birth: " + DateBirth.ToString());
             Console.WriteLine("Age: " + Age);
             Console.WriteLine("Balance: $" + Balance.ToString("0.00"));
             Console.WriteLine("Creation date: " + DateCreation);
