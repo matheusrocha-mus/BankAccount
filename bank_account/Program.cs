@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace bank_account
@@ -13,7 +15,7 @@ namespace bank_account
         {
             bool isEntryValid; // Used to handle invalid user input in every `Console.ReadLine`.
             string input;
-            Account account = new Account();
+            List<Account> accountList = new List<Account>();
 
             do
             {
@@ -26,15 +28,126 @@ namespace bank_account
                     case "yes":
                     case "1":
                         isEntryValid = true;
-                        account.CreateAccount();
+
+                        string name = null;
+                        while (name == null)
+                        {
+                            Console.WriteLine("Enter the account owner's full name:");
+                            input = Console.ReadLine();
+                            if (!string.IsNullOrEmpty(input) & Regex.IsMatch(input, @"^[a-zA-Z\s]+$"))
+                            {
+                                string[] names = input.Split(' ');
+                                for (int i = 0; i < names.Length; i++)
+                                {
+                                    names[i] = names[i][0].ToString().ToUpper() + names[i].Substring(1).ToLower();
+                                }
+                                name = string.Join(" ", names);
+                            }
+                            else
+                            {
+                                name = null;
+                                Console.Clear();
+                                Console.WriteLine("Invalid input. A valid name has no numbers or special characters.");
+                                System.Threading.Thread.Sleep(2000);
+                                Console.Clear();
+                            }
+                        }
+                        Console.Clear();
+
+                        string password = null;
+                        while (password == null)
+                        {
+                            Console.WriteLine("Create a password:");
+                            input = Console.ReadLine();
+                            if (input.Length >= 8 & input.Any(char.IsUpper) & input.Any(char.IsLower) & input.Any(char.IsSymbol))
+                            {
+                                password = input;
+                                Console.Clear();
+                                Console.WriteLine("\nConfirm password:");
+                                input = Console.ReadLine();
+                                if (input != password)
+                                {
+                                    password = null;
+                                    Console.Clear();
+                                    Console.WriteLine("Passwords don't match. Plase try again.");
+                                    System.Threading.Thread.Sleep(2000);
+                                    Console.Clear();
+                                }
+                            }
+                            else
+                            {
+                                password = null;
+                                Console.Clear();
+                                Console.WriteLine("Invalid input. A valid password must contain at least 1 upper case letter, 1 lower case letter, 1 symbol and be at least 8 characters long.");
+                                System.Threading.Thread.Sleep(2000);
+                                Console.Clear();
+                            }
+                        }
+                        Console.Clear();
+
+                        DateTime? dateBirth = null;
+                        while (dateBirth == null)
+                        {
+                            Console.Write("Enter your date of birth (MM/DD/YYYY):");
+                            input = Console.ReadLine();
+                            if (DateTime.TryParseExact(input, "MM/dd/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime? validBirthDate))
+                            {
+                                dateBirth = validBirthDate;
+                            }
+                            else
+                            {
+                                dateBirth = null;
+                                Console.Clear();
+                                Console.WriteLine("Invalid input. A valid date must be in the format MM/DD/YYYY.");
+                                System.Threading.Thread.Sleep(2000);
+                                Console.Clear();
+                            }
+                        }
+                        Console.Clear();
+
+                        string ssn = null;
+                        while (ssn == null )
+                        {
+                            Console.WriteLine("Enter the account owner's SSN:");
+                            input = Console.ReadLine();
+                            if (int.TryParse(input, out int validSSN) & input.Length == 9)
+                            {
+                                ssn = input;
+                            }
+                            else
+                            {
+                                ssn = null;
+                                Console.Clear();
+                                Console.WriteLine("Invalid input. A valid SSN has exactly 9 digits and numbers only.");
+                                System.Threading.Thread.Sleep(2000);
+                                Console.Clear();
+                            }
+                        }
+
+                        Account newAccount = new Account(name, password, ssn, dateBirth);
+                        accountList.Add(newAccount);
                         break;
 
                     case "no":
                     case "2":
                         isEntryValid = true;
-                        Console.WriteLine("Thank you for using our services! Enter any key to exit.");
-                        Console.ReadKey();
-                        Environment.Exit(0);
+                        if (accountList.Count == 0)
+                        {
+                            Console.WriteLine("Thank you for using our services! Enter any key to exit.");
+                            Console.ReadKey();
+                            Environment.Exit(0);
+                        }
+                        else
+                        {
+                            Console.WriteLine("Here's a list of all new registered accounts and current balances:\n\n");
+                            foreach (Account account in accountList)
+                            {
+                                account.DisplayAccount();
+                            }
+                            Console.WriteLine("\nPress any key to continue");
+                            Console.ReadKey();
+                            Console.Clear();
+                        }
                         break;
 
                     default:
@@ -46,48 +159,49 @@ namespace bank_account
                 }
             } while (!isEntryValid);
 
-            do
+            if (Age < 18)
             {
-                Console.WriteLine("Choose an account type:");
-                Console.WriteLine("\n1) Savings\n2) Current\n3) Teen (underage user)\n4) Exit");
-                input = Console.ReadLine();
-                Console.Clear();
-                switch (input.ToLower())
+
+            }
+            else
+            {
+                do
                 {
-                    case "savings":
-                    case "1":
-                        isEntryValid = true;
-                        account.SavingsAccount
-                        break;
+                    Console.WriteLine("Choose an account type:");
+                    Console.WriteLine("\n1) Savings\n2) Current\n3) Exit");
+                    input = Console.ReadLine();
+                    Console.Clear();
+                    switch (input.ToLower())
+                    {
+                        case "savings":
+                        case "1":
+                            isEntryValid = true;
+                            break;
 
-                    case "current":
-                    case "2":
-                        isEntryValid = true;
-                        break;
+                        case "current":
+                        case "2":
+                            isEntryValid = true;
+                            break;
 
-                    case "teen":
-                    case "3":
-                        isEntryValid = true;
-                        break;
+                        case "exit":
+                        case "3":
+                            isEntryValid = true;
+                            Console.WriteLine("\nThank you for using our services! Enter any key to exit.");
+                            Console.ReadKey();
+                            Environment.Exit(0);
+                            break;
 
-                    case "exit":
-                    case "4":
-                        isEntryValid = true;
-                        Console.WriteLine("\nThank you for using our services! Enter any key to exit.");
-                        Console.ReadKey();
-                        Environment.Exit(0);
-                        break;
+                        default:
+                            isEntryValid = false;
+                            Console.WriteLine("Invalid input. Please enter a valid option (1, 2 or 3).");
+                            System.Threading.Thread.Sleep(2000);
+                            Console.Clear();
+                            break;
+                    }
+                } while (!isEntryValid);
+            }
 
-                    default:
-                        isEntryValid = false;
-                        Console.WriteLine("Invalid input. Please enter a valid option (1, 2, 3 or 4).");
-                        System.Threading.Thread.Sleep(2000);
-                        Console.Clear();
-                        break;
-                }
-            } while (!isEntryValid);
-
-                bool keepUsing; // Used to check whether the user wants to do another operation after his first one or not.
+            bool keepUsing; // Used to check whether the user wants to do another operation after his first one or not.
 
             do // One bigger loop to be repeated in case user wants to do another operation.
                // Two smaller loops: one for operation choosing and another for deciding wheteher or not user wants to do another operation.

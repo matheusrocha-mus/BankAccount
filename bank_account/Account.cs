@@ -21,93 +21,31 @@ namespace bank_account
         public string Name
         {
             get { return name; }
-            set
-            {
-                string[] names = value.Split(' ');
-                for (int i = 0; i < names.Length; i++)
-                {
-                    names[i] = names[i][0].ToString().ToUpper() + names[i].Substring(1).ToLower();
-                }
-                name = string.Join(" ", names);
-            } // Turns the first letter of the name into upper case and the others into lower case.
+            set { name = value; }
         }
 
         public string Password
         {
             get { return password; }
-            set
-            {
-                if (value.Length >= 8 & value.Any(char.IsUpper) & value.Any(char.IsLower) & value.Any(char.IsSymbol))
-                {
-                    password = value;
-                }
-                else
-                {
-                    password = null;
-                }
-
-            }
+            set { password = value; }
         }
 
         public string SSN
         {
             get { return ssn; }
-            set
-            {
-                if (int.TryParse(value, out int validSSN) & value.Length == 9) 
-                {
-                    ssn = Convert.ToString(validSSN);
-                }
-                    // Used to check if the user input is valid -> a valid SSN has exactly 9 numbers and only nummbers. 
-                    // If conversion from String to Int is succesfull, it's value is stored in `validSSN`.
-                else
-                {
-                    ssn = null; // If user input is not valid, SSN user input in `CreateAccount` will be asked again until it is valid.
-                }
-            }
-        }
-
-        private DateTime? ValidateDateOfBirth(string input)
-        {
-            if (DateTime.TryParseExact(input, "MM/dd/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime validBirthDate))
-            {
-                return validBirthDate;
-            }
-            else
-            {
-                Console.Clear();
-                Console.WriteLine("Invalid date of birth format. Please enter in the format MM/DD/YYYY.");
-                System.Threading.Thread.Sleep(2000);
-                Console.Clear();
-                Console.Write("Enter your date of birth (MM/DD/YYYY): ");
-                return null;
-            }
+            set { ssn = value; }
         }
 
         public DateTime? DateBirth
         {
             get { return dateBirth; }
-            set
-            {
-                dateBirth = ValidateDateOfBirth(value.ToString());
-                if (dateBirth != null)
-                {
-                    Age = (int)((DateTime.Now - dateBirth).TotalDays / 365.25);
-                }
-            }
+            set { dateBirth = value; }
         }
 
         public int Age
         {
             get { return age; }
-            set
-            {
-                Age = (int)((DateTime.Now - dateBirth).TotalDays / 365.25);
-                if (age < 18)
-                {
-                    Console.WriteLine("You must be at least 18 years old to create an account.");
-                }
-            }
+            set { age = value; }
         }
 
         public double Balance
@@ -118,71 +56,32 @@ namespace bank_account
 
         public DateTime DateCreation
         {
-            get { return dateCreation; } // `set{}` redundant since dateCreation needs to be set in `CreateAccount`.
+            get { return dateCreation; }
+            set { dateCreation = value; }
         }
 
         public string ABA
         {
             get { return aba; }
-            set // Creates a random 9 numbers string as an ABA for the user's account.
-            {
-                Random rnd = new Random();
-                for (int i = 0; i < 9; i++)
-                {
-                    int abaDigit = rnd.Next(0, 10);
-                    aba += abaDigit.ToString();
-                }
-            }
+            set { aba = value; }
         }
 
-        public Account()
+        public Account(string name, string password, string ssn, DateTime dateBirth)
         {
-            Console.WriteLine("Enter the account owner's full name:");
-            this.Name = Console.ReadLine();
-            Console.Clear();
-
-            Console.WriteLine("Enter the account owner's password:");
-            while (Password == null) // Password will be asked from the user again if entry is not valid.
+            Name = name;
+            Password = password;
+            SSN = ssn;
+            DateBirth = dateBirth;
+            Age = (int)((DateTime.Now - dateBirth).TotalDays / 365.25);
+            Balance = 0;
+            DateCreation = DateTime.Now;
+            ABA = "";
+            Random rnd = new Random();
+            for (int i = 0; i < 9; i++)
             {
-                Password = Console.ReadLine();
-                if (Password == null)
-                {
-                    Console.Clear();
-                    Console.WriteLine("Password must contain at least 1 upper case letter, 1 lower case letter, 1 symbol and be at least 8 characters long.");
-                    System.Threading.Thread.Sleep(2000);
-                    Console.Clear();
-                    Console.WriteLine("Enter the account owner's password:");
-                }
+                int abaDigit = rnd.Next(0, 10);
+                aba += abaDigit.ToString();
             }
-            Console.Clear();
-
-            Console.Write("Enter your date of birth (MM/DD/YYYY):");
-            while (DateBirth == null) // Date of birth will be asked from the user again if entry is not valid.
-            {
-                DateBirth = ValidateDateOfBirth(Console.ReadLine().Trim());
-            }
-            Console.Clear();
-
-            Console.WriteLine("Enter the account owner's SSN:");
-            while (SSN == null) // SSN will be asked from the user again if entry is not valid.
-            {
-                SSN = Console.ReadLine();
-                if (SSN == null)
-                {
-                    Console.Clear();
-                    Console.WriteLine("Invalid input for 'SSN'. A valid SSN has exactly 9 digits and numbers only.");
-                    System.Threading.Thread.Sleep(2000);
-                    Console.Clear();
-                    Console.WriteLine("Enter the account owner's SSN:");
-                }
-            }
-            Console.Clear();
-
-            Balance = 0; // Sets inicial bank account balance as $0.00.
-
-            this.dateCreation = DateTime.Now; // `DateTime.Now displays current day, month, year, hour, minutes and seconds when it's called.
-
-            this.ABA = "";
         }
 
         public void DisplayAccount()
@@ -191,7 +90,7 @@ namespace bank_account
             Console.WriteLine("Password: " + Password);
             Console.WriteLine("SSN: " + SSN);
             Console.WriteLine("Date of birth: " + DateBirth.ToString());
-            Console.WriteLine("Age: " + Age);
+            Console.WriteLine("Age: " + Age + " years old");
             Console.WriteLine("Balance: $" + Balance.ToString("0.00"));
             Console.WriteLine("Creation date: " + DateCreation);
             Console.WriteLine("ABA: " + ABA);
