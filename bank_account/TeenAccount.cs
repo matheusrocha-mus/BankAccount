@@ -4,11 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace bank_account
+namespace BankAccount
 {
     internal class TeenAccount : Account
     {
-        public void Withdrawal ()
+        public TeenAccount(string name, string password, string ssn, DateTime? dateBirth) : base(name, password, ssn, dateBirth)
+        {
+        }
+
+        public override void Withdrawal ()
         {
             if (isWithdrawalValid & withdrawal < Balance)
             {
@@ -17,7 +21,7 @@ namespace bank_account
                     Balance -= withdrawal - (withdrawal* 0.02);
                 }
 
-                else
+                if (withdrawal >= 50)
                 {
                     Console.Clear();
                     Console.WriteLine("Invalid withdrawal value: only widrawals below $50.00 are allowed for Teen accounts.");

@@ -6,7 +6,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace bank_account
+namespace BankAccount
 {
     internal class Program
     {
@@ -16,6 +16,7 @@ namespace bank_account
             bool isEntryValid; // Used to handle invalid user input in every `Console.ReadLine`.
             string input;
             List<Account> accountList = new List<Account>();
+            Account newAccount = null;
 
             do
             {
@@ -59,11 +60,11 @@ namespace bank_account
                         {
                             Console.WriteLine("Create a password:");
                             input = Console.ReadLine();
-                            if (input.Length >= 8 & input.Any(char.IsUpper) & input.Any(char.IsLower) & input.Any(char.IsSymbol))
+                            if (input.Length >= 8 & input.Any(char.IsUpper) & input.Any(char.IsLower)/* & input.Any(char.IsSymbol)*/)
                             {
                                 password = input;
                                 Console.Clear();
-                                Console.WriteLine("\nConfirm password:");
+                                Console.WriteLine("Confirm password:");
                                 input = Console.ReadLine();
                                 if (input != password)
                                 {
@@ -79,7 +80,7 @@ namespace bank_account
                                 password = null;
                                 Console.Clear();
                                 Console.WriteLine("Invalid input. A valid password must contain at least 1 upper case letter, 1 lower case letter, 1 symbol and be at least 8 characters long.");
-                                System.Threading.Thread.Sleep(2000);
+                                System.Threading.Thread.Sleep(4500);
                                 Console.Clear();
                             }
                         }
@@ -90,7 +91,7 @@ namespace bank_account
                         {
                             Console.Write("Enter your date of birth (MM/DD/YYYY):");
                             input = Console.ReadLine();
-                            if (DateTime.TryParseExact(input, "MM/dd/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime? validBirthDate))
+                            if (DateTime.TryParseExact(input, "MM/dd/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime validBirthDate))
                             {
                                 dateBirth = validBirthDate;
                             }
@@ -123,8 +124,9 @@ namespace bank_account
                                 Console.Clear();
                             }
                         }
+                        Console.Clear();
 
-                        Account newAccount = new Account(name, password, ssn, dateBirth);
+                        newAccount = new Account(name, password, ssn, dateBirth);
                         accountList.Add(newAccount);
                         break;
 
@@ -159,9 +161,9 @@ namespace bank_account
                 }
             } while (!isEntryValid);
 
-            if (Age < 18)
+            if (newAccount.Age < 18)
             {
-
+                Console.WriteLine("As an underage user, you have been automatically assigned a Teen Account");
             }
             else
             {
@@ -219,7 +221,7 @@ namespace bank_account
                         case "balance":
                         case "1":
                             isEntryValid = true;
-                            account.DisplayAccount();
+                            newAccount.DisplayAccount();
                             Console.WriteLine("\nEnter any key to continue.");
                             Console.ReadKey();
                             Console.Clear();
@@ -228,19 +230,19 @@ namespace bank_account
                         case "withdrawal":
                         case "2":
                             isEntryValid = true;
-                            account.Withdrawal();
+                            newAccount.Withdrawal();
                             break;
 
                         case "deposit":
                         case "3":
                             isEntryValid = true;
-                            account.Deposit();
+                            newAccount.Deposit();
                             break;
 
                         case "exit":
                         case "4":
                             isEntryValid = true;
-                            account.DisplayAccount();
+                            newAccount.DisplayAccount();
                             Console.WriteLine("\nThank you for using our services! Enter any key to exit.");
                             Console.ReadKey();
                             Environment.Exit(0);

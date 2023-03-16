@@ -4,15 +4,19 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace bank_account
+namespace BankAccount
 {
     internal class CurrentAccount : Account
     {
-        public void Withdrawal ()
+        public CurrentAccount(string name, string password, string ssn, DateTime? dateBirth) : base(name, password, ssn, dateBirth)
         {
-            if (isWithdrawalValid & withdrawal < Balance)
+        }
+
+        public override void Withdrawal()
+        {
+            if (base.isWithdrawalValid & base.withdrawal < Balance)
             {
-                Balance -= withdrawal - (withdrawal * 0.05);
+                Balance -= withdrawal + (withdrawal * 0.05);
             }
         }
     }

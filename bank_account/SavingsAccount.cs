@@ -4,11 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace bank_account
+namespace BankAccount
 {
     internal class SavingsAccount : Account
     {
-        public void Withdrawal ()
+        public SavingsAccount(string name, string password, string ssn, DateTime? dateBirth) : base(name, password, ssn, dateBirth)
+        {
+        }
+
+        public override void Withdrawal ()
         {
             if (isWithdrawalValid & withdrawal < Balance)
             {

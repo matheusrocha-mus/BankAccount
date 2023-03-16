@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Globalization;
 
-namespace bank_account
+namespace BankAccount
 {
     internal class Account
     {
@@ -66,13 +66,13 @@ namespace bank_account
             set { aba = value; }
         }
 
-        public Account(string name, string password, string ssn, DateTime dateBirth)
+        public Account(string name, string password, string ssn, DateTime? dateBirth)
         {
             Name = name;
             Password = password;
             SSN = ssn;
             DateBirth = dateBirth;
-            Age = (int)((DateTime.Now - dateBirth).TotalDays / 365.25);
+            Age = (int)((DateTime.Now - (dateBirth ?? DateTime.MinValue)).TotalDays / 365.25);
             Balance = 0;
             DateCreation = DateTime.Now;
             ABA = "";
@@ -96,15 +96,18 @@ namespace bank_account
             Console.WriteLine("ABA: " + ABA);
         }
 
-        public void Withdrawal()
+        protected bool isWithdrawalValid;
+        protected double withdrawal;
+
+        public virtual void Withdrawal()
         {
             bool isEntryValid;
             do
             {
                 Console.WriteLine("Enter value you wish to withdrawal:");
-                bool isWithdrawalValid = Double.TryParse(Console.ReadLine(), out double withdrawal);
+                isWithdrawalValid = Double.TryParse(Console.ReadLine(), out withdrawal);
                     // `isWithdrawalValid` is used to handle a failed user input's conversion into Double, and `withdrawal` is used to store the value of a successfull String to Double conversion.
-                if (isWithdrawalValid & withdrawal > balance) // In case the user tries to withdrawal a value higher than it's account balance.
+                if (isWithdrawalValid & withdrawal > Balance) // In case the user tries to withdrawal a value higher than it's account balance.
                 {
                     isEntryValid = true;
                     Console.Clear();
@@ -113,13 +116,13 @@ namespace bank_account
                     Console.Clear();
                 }
 
-                else if (isWithdrawalValid & withdrawal < balance)
+                else if (isWithdrawalValid & withdrawal < Balance)
                 {
                     isEntryValid = true;
-                    balance -= withdrawal;
+                    Balance -= withdrawal;
                     Console.Clear ();
                     Console.WriteLine("Successfully withdrawed $" + withdrawal.ToString("0.00"));
-                    Console.WriteLine("\nBalance: $" + balance.ToString("0.00"));
+                    Console.WriteLine("\nBalance: $" + Balance.ToString("0.00"));
                     System.Threading.Thread.Sleep(2500);
                     Console.Clear();
                 }
@@ -146,10 +149,10 @@ namespace bank_account
                 if (isDepositValid)
                 {
                     isEntryValid = true;
-                    balance += deposit;
+                    Balance += deposit;
                     Console.Clear();
                     Console.WriteLine("Successfully deposited $" + deposit.ToString("0.00"));
-                    Console.WriteLine("\nBalance: $" + balance.ToString("0.00"));
+                    Console.WriteLine("\nBalance: $" + Balance.ToString("0.00"));
                     System.Threading.Thread.Sleep(2500);
                     Console.Clear();
                 }
