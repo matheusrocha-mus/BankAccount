@@ -84,16 +84,29 @@ namespace BankAccount
             }
         }
 
-        public void DisplayAccount()
+        public void DisplayAccount(bool isInForEach)
         {
             Console.WriteLine("Name: " + Name);
-            Console.WriteLine("Password: " + Password);
-            Console.WriteLine("SSN: " + SSN);
-            Console.WriteLine("Date of birth: " + DateBirth.ToString());
-            Console.WriteLine("Age: " + Age + " years old");
-            Console.WriteLine("Balance: $" + Balance.ToString("0.00"));
-            Console.WriteLine("Creation date: " + DateCreation);
-            Console.WriteLine("ABA: " + ABA);
+            if (isInForEach)
+            {
+                Console.WriteLine("Password: " + Password[0] + new string('*', Password.Length - 2) + Password[Password.Length - 1]);
+                Console.WriteLine("SSN: " + SSN[0] + new string('*', SSN.Length - 2) + SSN[SSN.Length - 1]);
+                Console.WriteLine("Date of birth: " + DateBirth.ToString());
+                Console.WriteLine("Age: " + Age + " years old");
+                Console.WriteLine("Balance: $" + new string('*', balance.ToString("C2").Length - 3) + balance.ToString("C2").Substring(balance.ToString("C2").Length - 3));
+                Console.WriteLine("Creation date: " + DateCreation);
+                Console.WriteLine("ABA: " + ABA[0] + new string('*', ABA.Length - 2) + ABA[ABA.Length - 1] + "\n");
+            }
+            else
+            {
+                Console.WriteLine("Password: " + Password);
+                Console.WriteLine("SSN: " + SSN);
+                Console.WriteLine("Date of birth: " + DateBirth.ToString());    
+                Console.WriteLine("Age: " + Age + " years old");
+                Console.WriteLine("Balance: $" + Balance.ToString("C2"));
+                Console.WriteLine("Creation date: " + DateCreation);
+                Console.WriteLine("ABA: " + ABA);
+            }
         }
 
         protected bool isWithdrawalValid;
@@ -121,8 +134,8 @@ namespace BankAccount
                     isEntryValid = true;
                     Balance -= withdrawal;
                     Console.Clear ();
-                    Console.WriteLine("Successfully withdrawed $" + withdrawal.ToString("0.00"));
-                    Console.WriteLine("\nBalance: $" + Balance.ToString("0.00"));
+                    Console.WriteLine("Successfully withdrawed $" + withdrawal.ToString("C2"));
+                    Console.WriteLine("\nBalance: $" + Balance.ToString("C2"));
                     System.Threading.Thread.Sleep(2500);
                     Console.Clear();
                 }
@@ -151,8 +164,8 @@ namespace BankAccount
                     isEntryValid = true;
                     Balance += deposit;
                     Console.Clear();
-                    Console.WriteLine("Successfully deposited $" + deposit.ToString("0.00"));
-                    Console.WriteLine("\nBalance: $" + Balance.ToString("0.00"));
+                    Console.WriteLine("Successfully deposited $" + deposit.ToString("C2"));
+                    Console.WriteLine("\nBalance: $" + Balance.ToString("C2"));
                     System.Threading.Thread.Sleep(2500);
                     Console.Clear();
                 }

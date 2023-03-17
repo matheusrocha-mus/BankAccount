@@ -14,13 +14,14 @@ namespace BankAccount
 
         public override void Withdrawal ()
         {
+            base.Withdrawal();
             if (isWithdrawalValid & withdrawal < Balance)
             {
                 if (Balance > 1000)
                 {
-                    Balance += Balance * 0.15;
+                    Balance *= 1.15;
                 }
-                Balance -= withdrawal - (withdrawal * 0.03);
+                Balance -= withdrawal * 1.03;
             }
         }
     }

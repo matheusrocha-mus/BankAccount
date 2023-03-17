@@ -14,9 +14,10 @@ namespace BankAccount
 
         public override void Withdrawal()
         {
-            if (base.isWithdrawalValid & base.withdrawal < Balance)
+            base.Withdrawal(); 
+            if (isWithdrawalValid & withdrawal < Balance)
             {
-                Balance -= withdrawal + (withdrawal * 0.05);
+                Balance -= withdrawal * 1.05;
             }
         }
     }

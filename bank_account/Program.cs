@@ -60,7 +60,7 @@ namespace BankAccount
                         {
                             Console.WriteLine("Create a password:");
                             input = Console.ReadLine();
-                            if (input.Length >= 8 & input.Any(char.IsUpper) & input.Any(char.IsLower)/* & input.Any(char.IsSymbol)*/)
+                            if (input.Length >= 8 & input.Any(char.IsUpper) & input.Any(char.IsLower)/* & input.Any(char.IsSymbol) || input.Any(char.IsPunctuation)*/)
                             {
                                 password = input;
                                 Console.Clear();
@@ -126,9 +126,51 @@ namespace BankAccount
                         }
                         Console.Clear();
 
-                        newAccount = new Account(name, password, ssn, dateBirth);
-                        accountList.Add(newAccount);
+                        do
+                        {
+                            Console.WriteLine("Choose an account type:");
+                            Console.WriteLine("\n1) Savings\n2) Current\n3) Exit");
+                            input = Console.ReadLine();
+                            Console.Clear();
+                            switch (input.ToLower())
+                            {
+                                case "savings":
+                                case "1":
+                                    isEntryValid = true;
+                                    newAccount = new SavingsAccount(name, password, ssn, dateBirth);
+                                    break;
+
+                                case "current":
+                                case "2":
+                                    isEntryValid = true;
+                                    newAccount = new CurrentAccount(name, password, ssn, dateBirth);
+                                    break;
+
+                                case "exit":
+                                case "3":
+                                    isEntryValid = true;
+                                    Console.WriteLine("\nThank you for using our services! Enter any key to exit.");
+                                    Console.ReadKey();
+                                    Environment.Exit(0);
+                                    break;
+
+                                default:
+                                    isEntryValid = false;
+                                    Console.WriteLine("Invalid input. Please enter a valid option (1, 2 or 3).");
+                                    System.Threading.Thread.Sleep(2000);
+                                    Console.Clear();
+                                    break;
+                            }
+                        } while (!isEntryValid);
+
+                        if (newAccount.Age < 18)
+                        {
+                            Console.WriteLine("As an underage user, you have been automatically assigned a Teen Account");
+                            newAccount = new TeenAccount(name, password, ssn, dateBirth);
+                        }
                         break;
+                        
+                        accountList.Add(newAccount);
 
                     case "no":
                     case "2":
@@ -144,7 +186,7 @@ namespace BankAccount
                             Console.WriteLine("Here's a list of all new registered accounts and current balances:\n\n");
                             foreach (Account account in accountList)
                             {
-                                account.DisplayAccount();
+                                account.DisplayAccount(true);
                             }
                             Console.WriteLine("\nPress any key to continue");
                             Console.ReadKey();
@@ -161,56 +203,13 @@ namespace BankAccount
                 }
             } while (!isEntryValid);
 
-            if (newAccount.Age < 18)
-            {
-                Console.WriteLine("As an underage user, you have been automatically assigned a Teen Account");
-            }
-            else
-            {
-                do
-                {
-                    Console.WriteLine("Choose an account type:");
-                    Console.WriteLine("\n1) Savings\n2) Current\n3) Exit");
-                    input = Console.ReadLine();
-                    Console.Clear();
-                    switch (input.ToLower())
-                    {
-                        case "savings":
-                        case "1":
-                            isEntryValid = true;
-                            break;
-
-                        case "current":
-                        case "2":
-                            isEntryValid = true;
-                            break;
-
-                        case "exit":
-                        case "3":
-                            isEntryValid = true;
-                            Console.WriteLine("\nThank you for using our services! Enter any key to exit.");
-                            Console.ReadKey();
-                            Environment.Exit(0);
-                            break;
-
-                        default:
-                            isEntryValid = false;
-                            Console.WriteLine("Invalid input. Please enter a valid option (1, 2 or 3).");
-                            System.Threading.Thread.Sleep(2000);
-                            Console.Clear();
-                            break;
-                    }
-                } while (!isEntryValid);
-            }
-
             bool keepUsing; // Used to check whether the user wants to do another operation after his first one or not.
 
             do // One bigger loop to be repeated in case user wants to do another operation.
-               // Two smaller loops: one for operation choosing and another for deciding wheteher or not user wants to do another operation.
             {
-                do
+                do // Two smaller loops: one for operation choosing and another for deciding whether or not user wants to do another operation.
                 {
-                    Console.WriteLine("Choose an option:");
+                    Console.WriteLine("Please choose an option:");
                     Console.WriteLine("\n1) Account data and balance\n2) Withdrawal\n3) Deposit\n4) Exit");
                     input = Console.ReadLine();
                     Console.Clear();
@@ -221,7 +220,7 @@ namespace BankAccount
                         case "balance":
                         case "1":
                             isEntryValid = true;
-                            newAccount.DisplayAccount();
+                            newAccount.DisplayAccount(false);
                             Console.WriteLine("\nEnter any key to continue.");
                             Console.ReadKey();
                             Console.Clear();
@@ -242,7 +241,7 @@ namespace BankAccount
                         case "exit":
                         case "4":
                             isEntryValid = true;
-                            newAccount.DisplayAccount();
+                            newAccount.DisplayAccount(false);
                             Console.WriteLine("\nThank you for using our services! Enter any key to exit.");
                             Console.ReadKey();
                             Environment.Exit(0);
