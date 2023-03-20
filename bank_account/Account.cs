@@ -84,16 +84,16 @@ namespace BankAccount
             }
         }
 
-        public void DisplayAccount(bool isInForEach)
+        public void DisplayAccount(bool showAllAccounts)
         {
             Console.WriteLine("Name: " + Name);
-            if (isInForEach)
+            if (showAllAccounts)
             {
                 Console.WriteLine("Password: " + Password[0] + new string('*', Password.Length - 2) + Password[Password.Length - 1]);
                 Console.WriteLine("SSN: " + SSN[0] + new string('*', SSN.Length - 2) + SSN[SSN.Length - 1]);
-                Console.WriteLine("Date of birth: " + DateBirth.ToString());
+                Console.WriteLine("Date of birth: " + DateBirth?.ToString("MM/dd/yyyy"));
                 Console.WriteLine("Age: " + Age + " years old");
-                Console.WriteLine("Balance: $" + new string('*', balance.ToString("C2").Length - 3) + balance.ToString("C2").Substring(balance.ToString("C2").Length - 3));
+                Console.WriteLine("Balance: " + new string('*', balance.ToString("C2").Length - 3) + balance.ToString("C2").Substring(balance.ToString("C2").Length - 3));
                 Console.WriteLine("Creation date: " + DateCreation);
                 Console.WriteLine("ABA: " + ABA[0] + new string('*', ABA.Length - 2) + ABA[ABA.Length - 1] + "\n");
             }
@@ -101,9 +101,9 @@ namespace BankAccount
             {
                 Console.WriteLine("Password: " + Password);
                 Console.WriteLine("SSN: " + SSN);
-                Console.WriteLine("Date of birth: " + DateBirth.ToString());    
+                Console.WriteLine("Date of birth: " + DateBirth?.ToString("MM/dd/yyyy"));
                 Console.WriteLine("Age: " + Age + " years old");
-                Console.WriteLine("Balance: $" + Balance.ToString("C2"));
+                Console.WriteLine("Balance: " + Balance.ToString("C2"));
                 Console.WriteLine("Creation date: " + DateCreation);
                 Console.WriteLine("ABA: " + ABA);
             }
@@ -120,24 +120,21 @@ namespace BankAccount
                 Console.WriteLine("Enter value you wish to withdrawal:");
                 isWithdrawalValid = Double.TryParse(Console.ReadLine(), out withdrawal);
                     // `isWithdrawalValid` is used to handle a failed user input's conversion into Double, and `withdrawal` is used to store the value of a successfull String to Double conversion.
-                if (isWithdrawalValid & withdrawal > Balance) // In case the user tries to withdrawal a value higher than it's account balance.
+                if (isWithdrawalValid && withdrawal > Balance) // In case the user tries to withdrawal a value higher than it's account balance.
                 {
                     isEntryValid = true;
                     Console.Clear();
                     Console.WriteLine("Invalid value for withdrawal: insufficient funds.");
-                    System.Threading.Thread.Sleep(2000);
+                    Console.WriteLine("\nBalance: " + Balance.ToString("C2"));
+                    Console.WriteLine("\nEnter any key to continue.");
+                    Console.ReadKey();
                     Console.Clear();
                 }
 
-                else if (isWithdrawalValid & withdrawal < Balance)
+                else if (isWithdrawalValid && withdrawal <= Balance && withdrawal > 0)
                 {
                     isEntryValid = true;
-                    Balance -= withdrawal;
                     Console.Clear ();
-                    Console.WriteLine("Successfully withdrawed $" + withdrawal.ToString("C2"));
-                    Console.WriteLine("\nBalance: $" + Balance.ToString("C2"));
-                    System.Threading.Thread.Sleep(2500);
-                    Console.Clear();
                 }
 
                 else
@@ -159,14 +156,15 @@ namespace BankAccount
                 Console.WriteLine("Enter value you wish to deposit:");
                 bool isDepositValid = Double.TryParse(Console.ReadLine(), out double deposit); 
                     // `isDepositValid` is used to handle a failed user input's conversion into Double, and `deposit` is used to store the value of a successfull String to Double conversion.
-                if (isDepositValid)
+                if (isDepositValid && deposit > 0)
                 {
                     isEntryValid = true;
                     Balance += deposit;
                     Console.Clear();
-                    Console.WriteLine("Successfully deposited $" + deposit.ToString("C2"));
-                    Console.WriteLine("\nBalance: $" + Balance.ToString("C2"));
-                    System.Threading.Thread.Sleep(2500);
+                    Console.WriteLine("Successfully deposited " + deposit.ToString("C2"));
+                    Console.WriteLine("\nBalance: " + Balance.ToString("C2"));
+                    Console.WriteLine("\nEnter any key to continue.");
+                    Console.ReadKey();
                     Console.Clear();
                 }
 
@@ -174,7 +172,7 @@ namespace BankAccount
                 {
                     isEntryValid = false;
                     Console.Clear();
-                    Console.WriteLine("Invalid input for a deposit. A valid deposit is a monetary value, with only numbers.");
+                    Console.WriteLine("Invalid input for a deposit. A valid deposit is a monetary value, with only numbers, higher than $0.00.");
                     System.Threading.Thread.Sleep(2000);
                     Console.Clear();
                 }

@@ -15,9 +15,28 @@ namespace BankAccount
         public override void Withdrawal()
         {
             base.Withdrawal(); 
-            if (isWithdrawalValid & withdrawal < Balance)
+            if (isWithdrawalValid && withdrawal <= Balance)
             {
-                Balance -= withdrawal * 1.05;
+                if (Balance < withdrawal * 1.05)
+                {
+                    Console.Clear();
+                    Console.WriteLine("Invalid value for withdrawal: insufficient funds. Current account's have a 5% fee on every withdrawal operation.");
+                    Console.WriteLine("\nBalance: " + Balance.ToString("C2"));
+                    Console.WriteLine("\nEnter any key to continue.");
+                    Console.ReadKey();
+                    Console.Clear();
+                }
+
+                else
+                {
+                    Balance -= withdrawal * 1.05;
+                    Console.WriteLine("Successfully withdrawed " + withdrawal.ToString("C2"));
+                    Console.WriteLine("Current account's 5% withdrawal fee: " + (withdrawal * 0.05).ToString("C2"));
+                    Console.WriteLine("\nBalance: " + Balance.ToString("C2"));
+                    Console.WriteLine("\nEnter any key to continue.");
+                    Console.ReadKey();
+                    Console.Clear();
+                }
             }
         }
     }

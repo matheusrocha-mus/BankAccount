@@ -13,8 +13,9 @@ namespace BankAccount
 
         public static void Main(string[] args)
         {
-            bool isEntryValid; // Used to handle invalid user input in every `Console.ReadLine`.
-            string input;
+            bool isEntryValid; // Used to handle invalid user input in every `Console.ReadLine()`.
+            bool keepRegistering; // Used to check and validate whether the user wants to create another account or not
+            string input; // Used in many `Console.ReadLine()` throughout the code to store user input 
             List<Account> accountList = new List<Account>();
             Account newAccount = null;
 
@@ -26,16 +27,48 @@ namespace BankAccount
                 Console.Clear();
                 switch (input.ToLower())
                 {
+                    default:
+                        keepRegistering = true;
+                        Console.WriteLine("Invalid input. Please enter a valid option (1 or 2).");
+                        System.Threading.Thread.Sleep(2000);
+                        Console.Clear();
+                        break;
+
+                    case "no":
+                    case "2":
+                        keepRegistering = false;
+                        if (accountList.Count == 0)
+                        {
+                            Console.WriteLine("Thank you for using our services! Enter any key to exit.");
+                            Console.ReadKey();
+                            Environment.Exit(0);
+                        }
+                        else
+                        {
+                            Console.WriteLine("Here's a list of all new registered accounts and their info:\n\n");
+                            foreach (Account account in accountList)
+                            {
+                                account.DisplayAccount(true);
+                            }
+                            Console.WriteLine("\nEnter any key to continue.");
+                            Console.ReadKey();
+                            Console.Clear();
+                            Console.WriteLine("Thank you for using our services! Enter any key to exit.");
+                            Console.ReadKey();
+                            Environment.Exit(0);
+                        }
+                        break;
+
                     case "yes":
                     case "1":
-                        isEntryValid = true;
+                        keepRegistering = true;
 
                         string name = null;
                         while (name == null)
                         {
                             Console.WriteLine("Enter the account owner's full name:");
                             input = Console.ReadLine();
-                            if (!string.IsNullOrEmpty(input) & Regex.IsMatch(input, @"^[a-zA-Z\s]+$"))
+                            if (!string.IsNullOrEmpty(input) && Regex.IsMatch(input, @"^[a-zA-Z\s]+$"))
                             {
                                 string[] names = input.Split(' ');
                                 for (int i = 0; i < names.Length; i++)
@@ -60,8 +93,8 @@ namespace BankAccount
                         {
                             Console.WriteLine("Create a password:");
                             input = Console.ReadLine();
-                            if (input.Length >= 8 & input.Any(char.IsUpper) & input.Any(char.IsLower)/* & input.Any(char.IsSymbol) || input.Any(char.IsPunctuation)*/)
-                            {
+                            if (Regex.IsMatch(input, @"^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[^\w\s])[^\s]{8,}$"))
+                                {
                                 password = input;
                                 Console.Clear();
                                 Console.WriteLine("Confirm password:");
@@ -79,7 +112,7 @@ namespace BankAccount
                             {
                                 password = null;
                                 Console.Clear();
-                                Console.WriteLine("Invalid input. A valid password must contain at least 1 upper case letter, 1 lower case letter, 1 symbol and be at least 8 characters long.");
+                                Console.WriteLine("Invalid input. A valid password must be at least 8 characters long and contain at least 1 upper case letter, 1 lower case letter, 1 number and one special character/symbol/ponctuation sign.");
                                 System.Threading.Thread.Sleep(4500);
                                 Console.Clear();
                             }
@@ -111,7 +144,7 @@ namespace BankAccount
                         {
                             Console.WriteLine("Enter the account owner's SSN:");
                             input = Console.ReadLine();
-                            if (int.TryParse(input, out int validSSN) & input.Length == 9)
+                            if (int.TryParse(input, out int validSSN) && input.Length == 9)
                             {
                                 ssn = input;
                             }
@@ -126,172 +159,165 @@ namespace BankAccount
                         }
                         Console.Clear();
 
-                        do
-                        {
-                            Console.WriteLine("Choose an account type:");
-                            Console.WriteLine("\n1) Savings\n2) Current\n3) Exit");
-                            input = Console.ReadLine();
-                            Console.Clear();
-                            switch (input.ToLower())
-                            {
-                                case "savings":
-                                case "1":
-                                    isEntryValid = true;
-                                    newAccount = new SavingsAccount(name, password, ssn, dateBirth);
-                                    break;
-
-                                case "current":
-                                case "2":
-                                    isEntryValid = true;
-                                    newAccount = new CurrentAccount(name, password, ssn, dateBirth);
-                                    break;
-
-                                case "exit":
-                                case "3":
-                                    isEntryValid = true;
-                                    Console.WriteLine("\nThank you for using our services! Enter any key to exit.");
-                                    Console.ReadKey();
-                                    Environment.Exit(0);
-                                    break;
-
-                                default:
-                                    isEntryValid = false;
-                                    Console.WriteLine("Invalid input. Please enter a valid option (1, 2 or 3).");
-                                    System.Threading.Thread.Sleep(2000);
-                                    Console.Clear();
-                                    break;
-                            }
-                        } while (!isEntryValid);
+                        newAccount = new Account(name, password, ssn, dateBirth);
 
                         if (newAccount.Age < 18)
                         {
-                            Console.WriteLine("As an underage user, you have been automatically assigned a Teen Account");
+                            Console.WriteLine("As an underage user, you have been automatically assigned a Teen Account.\n");
                             newAccount = new TeenAccount(name, password, ssn, dateBirth);
                         }
-                        break;
-                        
-                        accountList.Add(newAccount);
 
-                    case "no":
-                    case "2":
-                        isEntryValid = true;
-                        if (accountList.Count == 0)
-                        {
-                            Console.WriteLine("Thank you for using our services! Enter any key to exit.");
-                            Console.ReadKey();
-                            Environment.Exit(0);
-                        }
                         else
                         {
-                            Console.WriteLine("Here's a list of all new registered accounts and current balances:\n\n");
-                            foreach (Account account in accountList)
+                            do
                             {
-                                account.DisplayAccount(true);
-                            }
-                            Console.WriteLine("\nPress any key to continue");
-                            Console.ReadKey();
-                            Console.Clear();
+                                Console.WriteLine("Choose an account type:");
+                                Console.WriteLine("\n1) Savings\n2) Current\n3) Exit");
+                                input = Console.ReadLine();
+                                Console.Clear();
+                                
+                                switch (input.ToLower())
+                                {
+                                    case "savings":
+                                    case "1":
+                                        isEntryValid = true;
+                                        newAccount = new SavingsAccount(name, password, ssn, dateBirth);
+                                        break;
+
+                                    case "current":
+                                    case "2":
+                                        isEntryValid = true;
+                                        newAccount = new CurrentAccount(name, password, ssn, dateBirth);
+                                        break;
+
+                                    case "exit":
+                                    case "3":
+                                        isEntryValid = true;
+                                        if (accountList.Count == 0)
+                                        {
+                                            Console.WriteLine("Thank you for using our services! Enter any key to exit.");
+                                            Console.ReadKey();
+                                            Environment.Exit(0);
+                                        }
+                                        else
+                                        {
+                                            input = "exit";
+                                        }
+                                        break;
+
+                                    default:
+                                        isEntryValid = false;
+                                        Console.WriteLine("Invalid input. Please enter a valid option (1, 2 or 3).");
+                                        System.Threading.Thread.Sleep(2000);
+                                        Console.Clear();
+                                        break;
+                                }
+                            } while (!isEntryValid);
+                        }
+                        
+                        if (input != "exit")
+                        {
+                            accountList.Add(newAccount);
+
+                            bool keepUsing = true; // Used to check whether the user wants to do another operation or not.
+
+                            do // One bigger loop to be repeated in case user wants to do another operation.
+                            {
+                                do // Two smaller loops: one for operation choosing and another for deciding whether or not user wants to do another operation.
+                                {
+                                    Console.WriteLine("Please choose an option:");
+                                    Console.WriteLine("\n1) Account data and balance\n2) Withdrawal\n3) Deposit\n4) Exit");
+                                    input = Console.ReadLine();
+                                    Console.Clear();
+                                    switch (input.ToLower())
+                                    {
+                                        case "account data and balance":
+                                        case "account data":
+                                        case "balance":
+                                        case "1":
+                                            isEntryValid = true;
+                                            newAccount.DisplayAccount(false);
+                                            Console.WriteLine("\nEnter any key to continue.");
+                                            Console.ReadKey();
+                                            Console.Clear();
+                                            break;
+
+                                        case "withdrawal":
+                                        case "2":
+                                            isEntryValid = true;
+                                            if (newAccount.Balance == 0)
+                                            {
+                                                Console.WriteLine();
+                                                Console.Clear();
+                                                Console.WriteLine("Invalid value for a withdrawal: your account balance is currently " + newAccount.Balance.ToString("C2"));
+                                                System.Threading.Thread.Sleep(2000);
+                                                Console.Clear();
+                                            }
+                                            else
+                                            {
+                                                newAccount.Withdrawal();
+                                            }
+                                            break;
+
+                                        case "deposit":
+                                        case "3":
+                                            isEntryValid = true;
+                                            newAccount.Deposit();
+                                            break;
+
+                                        case "exit":
+                                        case "4":
+                                            isEntryValid = true;
+                                            input = "exit";
+                                            keepUsing = false;
+                                            break;
+
+                                        default:
+                                            isEntryValid = false;
+                                            Console.WriteLine("Invalid input. Please enter a valid option (1, 2, 3 or 4).");
+                                            System.Threading.Thread.Sleep(2000);
+                                            Console.Clear();
+                                            break;
+                                    }
+                                } while (!isEntryValid);
+
+                                if (input != "exit")
+                                {
+                                    do
+                                    {
+                                        Console.WriteLine("Would you like to perform another operation?");
+                                        Console.WriteLine("\n1) Yes\n2) No");
+                                        input = Console.ReadLine();
+                                        Console.Clear();
+                                        switch (input.ToLower())
+                                        {
+                                            case "yes":
+                                            case "1":
+                                                isEntryValid = true;
+                                                keepUsing = true;
+                                                break;
+
+                                            case "no":
+                                            case "2":
+                                                isEntryValid = true;
+                                                keepUsing = false;
+                                                break;
+
+                                            default:
+                                                isEntryValid = false;
+                                                keepUsing = true;
+                                                Console.WriteLine("Invalid input. Please enter a valid option (1 or 2).");
+                                                System.Threading.Thread.Sleep(2000);
+                                                Console.Clear();
+                                                break;
+                                        }
+                                    } while (!isEntryValid);
+                                }
+                            } while (keepUsing);
                         }
                         break;
-
-                    default:
-                        isEntryValid = false;
-                        Console.WriteLine("Invalid input. Please enter a valid option (1 or 2).");
-                        System.Threading.Thread.Sleep(2000);
-                        Console.Clear();
-                        break;
                 }
-            } while (!isEntryValid);
-
-            bool keepUsing; // Used to check whether the user wants to do another operation after his first one or not.
-
-            do // One bigger loop to be repeated in case user wants to do another operation.
-            {
-                do // Two smaller loops: one for operation choosing and another for deciding whether or not user wants to do another operation.
-                {
-                    Console.WriteLine("Please choose an option:");
-                    Console.WriteLine("\n1) Account data and balance\n2) Withdrawal\n3) Deposit\n4) Exit");
-                    input = Console.ReadLine();
-                    Console.Clear();
-                    switch (input.ToLower())
-                    {
-                        case "account data and balance":
-                        case "account data":
-                        case "balance":
-                        case "1":
-                            isEntryValid = true;
-                            newAccount.DisplayAccount(false);
-                            Console.WriteLine("\nEnter any key to continue.");
-                            Console.ReadKey();
-                            Console.Clear();
-                            break;
-
-                        case "withdrawal":
-                        case "2":
-                            isEntryValid = true;
-                            newAccount.Withdrawal();
-                            break;
-
-                        case "deposit":
-                        case "3":
-                            isEntryValid = true;
-                            newAccount.Deposit();
-                            break;
-
-                        case "exit":
-                        case "4":
-                            isEntryValid = true;
-                            newAccount.DisplayAccount(false);
-                            Console.WriteLine("\nThank you for using our services! Enter any key to exit.");
-                            Console.ReadKey();
-                            Environment.Exit(0);
-                            break;
-
-                        default:
-                            isEntryValid = false;
-                            Console.WriteLine("Invalid input. Please enter a valid option (1, 2, 3 or 4).");
-                            System.Threading.Thread.Sleep(2000);
-                            Console.Clear();
-                            break;
-                    }
-                } while (!isEntryValid);
-
-                do
-                {
-                    Console.WriteLine("Would you like to perform another operation?");
-                    Console.WriteLine("1) Yes\n2) No");
-                    input = Console.ReadLine();
-                    Console.Clear();
-                    switch (input.ToLower())
-                    {
-                        case "yes":
-                        case "1":
-                            isEntryValid = true;
-                            keepUsing = true;
-                            break;
-
-                        case "no":
-                        case "2":
-                            isEntryValid = true;
-                            keepUsing = false;
-                            Console.WriteLine("Thank you! Please enter any key to exit.");
-                            Console.ReadKey();
-                            Environment.Exit(0);
-                            break;
-
-                        default:
-                            isEntryValid = false;
-                            keepUsing = true;
-                            Console.WriteLine("Invalid input. Please enter a valid option (1 or 2).");
-                            System.Threading.Thread.Sleep(2000);
-                            Console.Clear();
-                            break;
-                    }
-                } while (!isEntryValid);
-            } while (keepUsing);
-
-            Console.WriteLine("\nThank you for using our services! Press any key to exit.");
-            Console.ReadKey();
+            } while (keepRegistering);
         }
     }
 }
