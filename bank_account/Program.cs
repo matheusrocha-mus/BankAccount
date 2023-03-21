@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Security.Principal;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -53,9 +54,6 @@ namespace BankAccount
                             Console.WriteLine("\nEnter any key to continue.");
                             Console.ReadKey();
                             Console.Clear();
-                            Console.WriteLine("Thank you for using our services! Enter any key to exit.");
-                            Console.ReadKey();
-                            Environment.Exit(0);
                         }
                         break;
 
@@ -317,6 +315,82 @@ namespace BankAccount
                         }
                         break;
                 }
+                do
+                {
+                    Console.WriteLine("Would you like to login on an account?");
+                    Console.WriteLine("\n1) Yes\n2) No\n3) Account list");
+                    input = Console.ReadLine();
+                    Console.Clear();
+                    switch (input.ToLower())
+                    {
+                        default:
+                            isEntryValid = false;
+                            Console.WriteLine("Invalid input. Please enter a valid option (1, 2 or 3).");
+                            System.Threading.Thread.Sleep(2000);
+                            Console.Clear();
+                            break;
+
+                        case "no":
+                        case "2":
+                            isEntryValid = true;
+                            Console.WriteLine("Thank you for using our services! Enter any key to exit.");
+                            Console.ReadKey();
+                            Environment.Exit(0);
+                            break;
+
+                        case "account list":
+                        case "list":
+                        case "3":
+                            isEntryValid = false;
+                            foreach (Account account in accountList)
+                            {
+                                account.DisplayAccount(true);
+                            }
+                            Console.WriteLine("\nEnter any key to continue.");
+                            Console.ReadKey();
+                            Console.Clear();
+                            break;
+
+                        case "yes":
+                        case "1":
+                            isEntryValid = true;
+                            bool ssnMatched = false;
+                            do
+                            {
+                                Console.WriteLine("Enter SSN:");
+                                input = Console.ReadLine();
+                                foreach (Account account in accountList)
+                                {
+                                    if (account.SSN == input)
+                                    {
+                                        Console.WriteLine("\nEnter password:");
+                                        input = Console.ReadLine();
+                                        if (account.Password == input)
+                                        {
+                                            // return account...?
+                                        }
+                                        else
+                                        {
+                                            Console.Clear();
+                                            Console.WriteLine("Incorrect password for this user. Please try again.");
+                                            System.Threading.Thread.Sleep(2000);
+                                            Console.Clear();
+                                        }
+                                        ssnMatched = true;
+                                        break;
+                                    }
+                                }
+                                if (!ssnMatched)
+                                {
+                                    Console.Clear();
+                                    Console.WriteLine("Invalid SSN: no matches found within registered accounts.");
+                                    System.Threading.Thread.Sleep(2000);
+                                    Console.Clear();
+                                }
+                            } while (!ssnMatched);
+                            break;
+                    }
+                } while (!isEntryValid);
             } while (keepRegistering);
         }
     }
