@@ -14,9 +14,11 @@ namespace BankAccount
         private string ssn;
         private DateTime? dateBirth;
         private int age;
-        private double balance;
+        private string accountType;
+        private string accountID;
+        private string abaNumber;
         private DateTime dateCreation;
-        private string aba;
+        private double balance;
 
         public string Name
         {
@@ -48,10 +50,22 @@ namespace BankAccount
             set { age = value; }
         }
 
-        public double Balance
+        public string AccountType
         {
-            get { return balance; }
-            set { balance = value; }
+            get { return accountType; }
+            set { accountType = value; }
+        }
+
+        public string AccountID
+        {
+            get { return accountID; }
+            set { accountID = value; }
+        }
+
+        public string ABANumber
+        {
+            get { return abaNumber; }
+            set { abaNumber = value; }
         }
 
         public DateTime DateCreation
@@ -60,28 +74,30 @@ namespace BankAccount
             set { dateCreation = value; }
         }
 
-        public string ABA
+        public double Balance
         {
-            get { return aba; }
-            set { aba = value; }
+            get { return balance; }
+            set { balance = value; }
         }
 
-        public Account(string name, string password, string ssn, DateTime? dateBirth)
+        public Account(string name, string password, string ssn, DateTime? dateBirth, string accountType)
         {
             Name = name;
             Password = password;
             SSN = ssn;
             DateBirth = dateBirth;
             Age = (int)((DateTime.Now - (dateBirth ?? DateTime.MinValue)).TotalDays / 365.25);
-            Balance = 0;
-            DateCreation = DateTime.Now;
-            ABA = "";
+            AccountType = accountType;
+            AccountID = ;
+            ABANumber = "";
             Random rnd = new Random();
             for (int i = 0; i < 9; i++)
             {
                 int abaDigit = rnd.Next(0, 10);
-                aba += abaDigit.ToString();
+                abaNumber += abaDigit.ToString();
             }
+            DateCreation = DateTime.Now;
+            Balance = 0;
         }
 
         public void DisplayAccount(bool showAllAccounts)
@@ -93,9 +109,11 @@ namespace BankAccount
                 Console.WriteLine("SSN: " + SSN[0] + new string('*', SSN.Length - 2) + SSN[SSN.Length - 1]);
                 Console.WriteLine("Date of birth: " + DateBirth?.ToString("MM/dd/yyyy"));
                 Console.WriteLine("Age: " + Age + " years old");
-                Console.WriteLine("Balance: " + new string('*', balance.ToString("C2").Length - 3) + balance.ToString("C2").Substring(balance.ToString("C2").Length - 3));
+                Console.WriteLine("Account type: " + AccountType);
+                Console.WriteLine("Account ID: " + AccountID[0] + new string('*', AccountID.Length - 2) + AccountID[AccountID.Length - 1] + "\n");
+                Console.WriteLine("ABA number: " + ABANumber[0] + new string('*', ABANumber.Length - 2) + ABANumber[ABANumber.Length - 1] + "\n");
                 Console.WriteLine("Creation date: " + DateCreation);
-                Console.WriteLine("ABA: " + ABA[0] + new string('*', ABA.Length - 2) + ABA[ABA.Length - 1] + "\n");
+                Console.WriteLine("Balance: " + new string('*', balance.ToString("C2").Length - 3) + balance.ToString("C2").Substring(balance.ToString("C2").Length - 3));
             }
             else
             {
@@ -103,9 +121,11 @@ namespace BankAccount
                 Console.WriteLine("SSN: " + SSN);
                 Console.WriteLine("Date of birth: " + DateBirth?.ToString("MM/dd/yyyy"));
                 Console.WriteLine("Age: " + Age + " years old");
-                Console.WriteLine("Balance: " + Balance.ToString("C2"));
+                Console.WriteLine("Account type: " + AccountType);
+                Console.WriteLine("Account ID: " + AccountID);
+                Console.WriteLine("ABA number: " + ABANumber);
                 Console.WriteLine("Creation date: " + DateCreation);
-                Console.WriteLine("ABA: " + ABA);
+                Console.WriteLine("Balance: " + Balance.ToString("C2"));
             }
         }
 

@@ -8,7 +8,7 @@ namespace BankAccount
 {
     internal class CurrentAccount : Account
     {
-        public CurrentAccount(string name, string password, string ssn, DateTime? dateBirth) : base(name, password, ssn, dateBirth)
+        public CurrentAccount(string name, string password, string ssn, DateTime? dateBirth, string accountType) : base(name, password, ssn, dateBirth, accountType)
         {
         }
 
