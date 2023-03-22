@@ -88,9 +88,14 @@ namespace BankAccount
             DateBirth = dateBirth;
             Age = (int)((DateTime.Now - (dateBirth ?? DateTime.MinValue)).TotalDays / 365.25);
             AccountType = accountType;
-            AccountID = ;
-            ABANumber = "";
+            AccountID = "";
             Random rnd = new Random();
+            for (int i = 0; i < 12; i++)
+            {
+                int accountDigit = rnd.Next(0, 13);
+                accountID += accountDigit.ToString();
+            }
+            ABANumber = "";
             for (int i = 0; i < 9; i++)
             {
                 int abaDigit = rnd.Next(0, 10);
