@@ -18,12 +18,12 @@ namespace BankAccount
         public static void Main(string[] args)
         {
             bool isEntryValid; // Used in `do while` statements throughout the code to handle invalid user input
-            bool keepRegistering; // Used to check and validate whether the user wants to create another account or not
-            bool isLoggedIn; // Used to determine the code pathway based on whether the user has logged in on an already existing account or not
+            bool isLoggedIn = false; // Used to determine the code pathway based on whether the user has logged in on an already existing account or not
+            int exitCounter = 0; // Used to exit the program if the user chooses not to login and not to create an account consecutively (no matter the order)
             string input; // Used in many `Console.ReadLine()` throughout the code to store user input 
             List<Account> accountList = new List<Account>(); // Stores the instances of created bank accounts
 
-            do
+            while (true)
             {
                 if (accountList.Count > 0)
                 {
@@ -46,6 +46,24 @@ namespace BankAccount
                             case "2":
                                 isEntryValid = true;
                                 isLoggedIn = false;
+                                exitCounter++;
+                                if (exitCounter == 2)
+                                {
+                                    Console.WriteLine("Thank you for using our services! Enter any key to exit.");
+                                    Console.ReadKey();
+                                    Environment.Exit(0);
+                                }
+                                else
+                                {
+                                    Console.WriteLine("Here's a list of all new registered accounts and their info:\n\n");
+                                    foreach (Account account in accountList)
+                                    {
+                                        account.DisplayAccount(true);
+                                    }
+                                    Console.WriteLine("\nEnter any key to continue.");
+                                    Console.ReadKey();
+                                    Console.Clear();
+                                }
                                 break;
 
                             case "account list":
@@ -65,6 +83,7 @@ namespace BankAccount
                             case "1":
                                 isEntryValid = true;
                                 bool ssnMatched = false;
+                                exitCounter = 0;
                                 do
                                 {
                                     Console.WriteLine("Enter SSN:");
@@ -77,6 +96,7 @@ namespace BankAccount
                                             input = Console.ReadLine();
                                             if (account.Password == input)
                                             {
+                                                ssnMatched = true;
                                                 loggedInAccount = account;
                                                 isLoggedIn = true;
                                                 Console.Clear();
@@ -93,7 +113,6 @@ namespace BankAccount
                                                 System.Threading.Thread.Sleep(2000);
                                                 Console.Clear();
                                             }
-                                            ssnMatched = true;
                                             break;
                                         }
                                     }
@@ -135,7 +154,8 @@ namespace BankAccount
                             case "2":
                                 isEntryValid = true;
                                 isLoggedIn = false;
-                                if (accountList.Count == 0)
+                                exitCounter++;
+                                if (accountList.Count == 0 || exitCounter == 2)
                                 {
                                     Console.WriteLine("Thank you for using our services! Enter any key to exit.");
                                     Console.ReadKey();
@@ -157,6 +177,7 @@ namespace BankAccount
                             case "yes":
                             case "1":
                                 isEntryValid = true;
+                                exitCounter = 0;
 
                                 string name = null;
                                 while (name == null)
@@ -269,11 +290,28 @@ namespace BankAccount
 
                                         switch (input.ToLower())
                                         {
+                                            case "1":
+                                            case "yes":
+                                                isEntryValid = true;
+                                                isLoggedIn = true;
+                                                accountType = "Teen";
+                                                newAccount = new TeenAccount(name, password, ssn, dateBirth, accountType);
+                                                break;
 
-                                    accountType = "Teen";
-                                        newAccount = new TeenAccount(name, password, ssn, dateBirth, accountType);
-                                    }
-                                    }while (!isEntryValid) ;
+                                            case "exit":
+                                            case "2":
+                                                isEntryValid = true;
+                                                isLoggedIn = false;
+                                                break;
+
+                                            default:
+                                                isEntryValid = false;
+                                                Console.WriteLine("Invalid input. Please enter a valid option (1, 2 or 3).");
+                                                System.Threading.Thread.Sleep(2000);
+                                                Console.Clear();
+                                                break;
+                                        }
+                                    } while (!isEntryValid) ;
                                 }
 
                                 else
@@ -291,14 +329,20 @@ namespace BankAccount
                                             case "1":
                                                 isEntryValid = true;
                                                 accountType = "Savings";
+                                                isLoggedIn = true;
                                                 newAccount = new SavingsAccount(name, password, ssn, dateBirth, accountType);
+                                                accountList.Add(newAccount);
+                                                loggedInAccount = newAccount;
                                                 break;
 
                                             case "current":
                                             case "2":
                                                 isEntryValid = true;
                                                 accountType = "Current";
+                                                isLoggedIn = true;
                                                 newAccount = new CurrentAccount(name, password, ssn, dateBirth, accountType);
+                                                accountList.Add(newAccount);
+                                                loggedInAccount = newAccount;
                                                 break;
 
                                             case "exit":
@@ -316,10 +360,6 @@ namespace BankAccount
                                         }
                                     } while (!isEntryValid);
                                 }
-
-                                isLoggedIn = true;
-                                accountList.Add(newAccount);
-                                loggedInAccount = newAccount;
                                 break;
                         }
                     } while (!isEntryValid);
@@ -327,7 +367,7 @@ namespace BankAccount
 
                 if (isLoggedIn)
                 {
-                    bool keepUsing = true; // Used to check whether the user wants to do another operation or not.
+                    bool keepUsing; // Used to check whether the user wants to do another operation or not.
 
                     do // One bigger loop to be repeated in case user wants to do another operation.
                     {
@@ -419,7 +459,7 @@ namespace BankAccount
                         } while (!isEntryValid);
                     } while (keepUsing);
                 }
-            } while ();
+            }
         }
     }
 }

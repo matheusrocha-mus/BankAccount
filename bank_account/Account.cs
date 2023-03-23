@@ -115,8 +115,8 @@ namespace BankAccount
                 Console.WriteLine("Date of birth: " + DateBirth?.ToString("MM/dd/yyyy"));
                 Console.WriteLine("Age: " + Age + " years old");
                 Console.WriteLine("Account type: " + AccountType);
-                Console.WriteLine("Account ID: " + AccountID[0] + new string('*', AccountID.Length - 2) + AccountID[AccountID.Length - 1] + "\n");
-                Console.WriteLine("ABA number: " + ABANumber[0] + new string('*', ABANumber.Length - 2) + ABANumber[ABANumber.Length - 1] + "\n");
+                Console.WriteLine("Account ID: " + AccountID[0] + new string('*', AccountID.Length - 2) + AccountID[AccountID.Length - 1]);
+                Console.WriteLine("ABA number: " + ABANumber[0] + new string('*', ABANumber.Length - 2) + ABANumber[ABANumber.Length - 1]);
                 Console.WriteLine("Creation date: " + DateCreation);
                 Console.WriteLine("Balance: " + new string('*', balance.ToString("C2").Length - 3) + balance.ToString("C2").Substring(balance.ToString("C2").Length - 3));
             }
