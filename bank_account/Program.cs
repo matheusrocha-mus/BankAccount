@@ -86,42 +86,47 @@ namespace BankAccount
                                 exitCounter = 0;
                                 do
                                 {
-                                    Console.WriteLine("Enter SSN:");
+                                    Console.WriteLine("Enter SSN (or 'exit' to leave login):");
                                     input = Console.ReadLine();
-                                    foreach (Account account in accountList)
+                                    if (input.ToLower() != "exit")
                                     {
-                                        if (account.SSN == input)
+                                        foreach (Account account in accountList)
                                         {
-                                            Console.WriteLine("\nEnter password:");
-                                            input = Console.ReadLine();
-                                            if (account.Password == input)
+                                            if (account.SSN == input)
                                             {
-                                                ssnMatched = true;
-                                                loggedInAccount = account;
-                                                isLoggedIn = true;
-                                                Console.Clear();
-                                                Console.WriteLine("Login successful!\n");
-                                                account.DisplayAccount(false);
-                                                Console.WriteLine("\nEnter any key to continue.");
-                                                Console.ReadKey();
-                                                Console.Clear();
+                                                do
+                                                {
+                                                    Console.WriteLine("\nEnter password (or 'back' to try to login with another SSN):");
+                                                    input = Console.ReadLine();
+                                                    if (account.Password == input)
+                                                    {
+                                                        ssnMatched = true;
+                                                        loggedInAccount = account;
+                                                        isLoggedIn = true;
+                                                        Console.Clear();
+                                                        Console.WriteLine("Login successful!\n");
+                                                        account.DisplayAccount(false);
+                                                        Console.WriteLine("\nEnter any key to continue.");
+                                                        Console.ReadKey();
+                                                        Console.Clear();
+                                                    }
+                                                    else
+                                                    {
+                                                        Console.Clear();
+                                                        Console.WriteLine("Incorrect password for this user. Please try again.");
+                                                        System.Threading.Thread.Sleep(2000);
+                                                        Console.Clear();
+                                                    }
+                                                } while (account.Password != input);
                                             }
-                                            else
-                                            {
-                                                Console.Clear();
-                                                Console.WriteLine("Incorrect password for this user. Please try again.");
-                                                System.Threading.Thread.Sleep(2000);
-                                                Console.Clear();
-                                            }
-                                            break;
                                         }
-                                    }
-                                    if (!ssnMatched)
-                                    {
-                                        Console.Clear();
-                                        Console.WriteLine("Invalid SSN: no matches found within registered accounts.");
-                                        System.Threading.Thread.Sleep(2000);
-                                        Console.Clear();
+                                        if (!ssnMatched)
+                                        {
+                                            Console.Clear();
+                                            Console.WriteLine("Invalid SSN: no matches found within registered accounts.");
+                                            System.Threading.Thread.Sleep(2000);
+                                            Console.Clear();
+                                        }
                                     }
                                 } while (!ssnMatched);
                                 break;
