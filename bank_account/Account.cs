@@ -118,7 +118,7 @@ namespace BankAccount
                 Console.WriteLine("Account ID: " + AccountID[0] + new string('*', AccountID.Length - 2) + AccountID[AccountID.Length - 1]);
                 Console.WriteLine("ABA number: " + ABANumber[0] + new string('*', ABANumber.Length - 2) + ABANumber[ABANumber.Length - 1]);
                 Console.WriteLine("Creation date: " + DateCreation);
-                Console.WriteLine("Balance: " + new string('*', balance.ToString("C2").Length - 3) + balance.ToString("C2").Substring(balance.ToString("C2").Length - 3) + "\n");
+                Console.WriteLine("Balance: " + new string('*', balance.ToString().Length - 3) + balance.ToString("C2").Substring(balance.ToString("C2").Length - 3) + "\n");
             }
             else
             {

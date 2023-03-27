@@ -298,9 +298,11 @@ namespace BankAccount
                                             case "1":
                                             case "yes":
                                                 isEntryValid = true;
-                                                isLoggedIn = true;
                                                 accountType = "Teen";
+                                                isLoggedIn = true;
                                                 newAccount = new TeenAccount(name, password, ssn, dateBirth, accountType);
+                                                accountList.Add(newAccount);
+                                                loggedInAccount = newAccount;
                                                 break;
 
                                             case "exit":
@@ -372,7 +374,7 @@ namespace BankAccount
 
                 if (isLoggedIn)
                 {
-                    bool keepUsing; // Used to check whether the user wants to do another operation or not.
+                    bool keepUsing = true; // Used to check whether the user wants to do another operation or not.
 
                     do // One bigger loop to be repeated in case user wants to do another operation.
                     {
@@ -433,35 +435,38 @@ namespace BankAccount
                             }
                         } while (!isEntryValid);
 
-                        do
+                        if (keepUsing)
                         {
-                            Console.WriteLine("Would you like to perform another operation?");
-                            Console.WriteLine("\n1) Yes\n2) No");
-                            input = Console.ReadLine();
-                            Console.Clear();
-                            switch (input.ToLower())
+                            do
                             {
-                                case "yes":
-                                case "1":
-                                    isEntryValid = true;
-                                    keepUsing = true;
-                                    break;
+                                Console.WriteLine("Would you like to perform another operation?");
+                                Console.WriteLine("\n1) Yes\n2) No");
+                                input = Console.ReadLine();
+                                Console.Clear();
+                                switch (input.ToLower())
+                                {
+                                    case "yes":
+                                    case "1":
+                                        isEntryValid = true;
+                                        keepUsing = true;
+                                        break;
 
-                                case "no":
-                                case "2":
-                                    isEntryValid = true;
-                                    keepUsing = false;
-                                    break;
+                                    case "no":
+                                    case "2":
+                                        isEntryValid = true;
+                                        keepUsing = false;
+                                        break;
 
-                                default:
-                                    isEntryValid = false;
-                                    keepUsing = true;
-                                    Console.WriteLine("Invalid input. Please enter a valid option (1 or 2).");
-                                    System.Threading.Thread.Sleep(2000);
-                                    Console.Clear();
-                                    break;
-                            }
-                        } while (!isEntryValid);
+                                    default:
+                                        isEntryValid = false;
+                                        keepUsing = true;
+                                        Console.WriteLine("Invalid input. Please enter a valid option (1 or 2).");
+                                        System.Threading.Thread.Sleep(2000);
+                                        Console.Clear();
+                                        break;
+                                }
+                            } while (!isEntryValid);
+                        }
                     } while (keepUsing);
                 }
             }
