@@ -18,13 +18,14 @@ namespace BankAccount
         public static void Main(string[] args)
         {
             bool isEntryValid; // Used in `do while` statements throughout the code to handle invalid user input
-            bool isLoggedIn = false; // Used to determine the code pathway based on whether the user has logged in on an already existing account or not
+            bool isLoggedIn; // Used to determine the code pathway based on whether the user has logged in on an already existing account or not
             int exitCounter = 0; // Used to exit the program if the user chooses not to login and not to create an account consecutively (no matter the order)
             string input; // Used in many `Console.ReadLine()` throughout the code to store user input 
             List<Account> accountList = new List<Account>(); // Stores the instances of created bank accounts
 
             while (true)
             {
+                isLoggedIn = false;
                 if (accountList.Count > 0)
                 {
                     do
@@ -53,17 +54,6 @@ namespace BankAccount
                                     Console.ReadKey();
                                     Environment.Exit(0);
                                 }
-                                else
-                                {
-                                    Console.WriteLine("Here's a list of all new registered accounts and their info:\n\n");
-                                    foreach (Account account in accountList)
-                                    {
-                                        account.DisplayAccount(true);
-                                    }
-                                    Console.WriteLine("\nEnter any key to continue.");
-                                    Console.ReadKey();
-                                    Console.Clear();
-                                }
                                 break;
 
                             case "account list":
@@ -82,56 +72,74 @@ namespace BankAccount
                             case "yes":
                             case "1":
                                 isEntryValid = true;
-                                bool ssnMatched = false;
+                                bool continueLogin = false;
                                 exitCounter = 0;
+                                isLoggedIn = false;
                                 do
                                 {
                                     Console.WriteLine("Enter SSN (or 'exit' to leave login):");
                                     input = Console.ReadLine();
-                                    if (input.ToLower() != "exit")
+                                    Console.Clear();
+                                    if (input.ToLower() == "exit")
                                     {
-                                        foreach (Account account in accountList)
-                                        {
-                                            if (account.SSN == input)
-                                            {
-                                                do
-                                                {
-                                                    Console.WriteLine("\nEnter password (or 'back' to try to login with another SSN):");
-                                                    input = Console.ReadLine();
-                                                    if (account.Password == input)
-                                                    {
-                                                        ssnMatched = true;
-                                                        loggedInAccount = account;
-                                                        isLoggedIn = true;
-                                                        Console.Clear();
-                                                        Console.WriteLine("Login successful!\n");
-                                                        account.DisplayAccount(false);
-                                                        Console.WriteLine("\nEnter any key to continue.");
-                                                        Console.ReadKey();
-                                                        Console.Clear();
-                                                    }
-                                                    else
-                                                    {
-                                                        Console.Clear();
-                                                        Console.WriteLine("Incorrect password for this user. Please try again.");
-                                                        System.Threading.Thread.Sleep(2000);
-                                                        Console.Clear();
-                                                    }
-                                                } while (account.Password != input);
-                                            }
-                                        }
-                                        if (!ssnMatched)
+                                        continueLogin = false;
+                                    }
+                                    else
+                                    {
+                                        if (!accountList.Any(account => account.SSN == input))
                                         {
                                             Console.Clear();
                                             Console.WriteLine("Invalid SSN: no matches found within registered accounts.");
                                             System.Threading.Thread.Sleep(2000);
                                             Console.Clear();
                                         }
+                                        else
+                                        {
+                                            foreach (Account account in accountList) // o problema é esse laço aki
+                                            {
+                                                if (account.SSN == input)
+                                                {
+                                                    do
+                                                    {
+                                                        Console.WriteLine("Enter password (or 'back' to try to login with another SSN):"); // mensagem repetindo msm depois de já ter feito login
+                                                        input = Console.ReadLine();
+                                                        Console.Clear();
+                                                        if (input.ToLower() == "back")
+                                                        {
+                                                            continueLogin = false; ;
+                                                        }
+                                                        else
+                                                        {
+                                                            if (account.Password == input)
+                                                            {
+                                                                continueLogin = false;
+                                                                loggedInAccount = account;
+                                                                isLoggedIn = true;
+                                                                Console.Clear();
+                                                                Console.WriteLine("Login successful!\n");
+                                                                account.DisplayAccount(false);
+                                                                Console.WriteLine("\nEnter any key to continue.");
+                                                                Console.ReadKey();
+                                                                Console.Clear();
+                                                            }
+                                                            else
+                                                            {
+                                                                continueLogin = true;
+                                                                Console.Clear();
+                                                                Console.WriteLine("Incorrect password for this user. Please try again.");
+                                                                System.Threading.Thread.Sleep(2000);
+                                                                Console.Clear();
+                                                            }
+                                                        }
+                                                    } while (continueLogin);
+                                                }
+                                            }
+                                        }
                                     }
-                                } while (!ssnMatched);
+                                } while (continueLogin || input.ToLower() != "exit");
                                 break;
                         }
-                    } while (!isEntryValid);
+                    } while (!isEntryValid || input.ToLower() == "exit");
                 }
                 else
                 {
