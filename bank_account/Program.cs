@@ -95,13 +95,13 @@ namespace BankAccount
                                         }
                                         else
                                         {
-                                            foreach (Account account in accountList) // o problema é esse laço aki
+                                            foreach (Account account in accountList)
                                             {
                                                 if (account.SSN == input)
                                                 {
                                                     do
                                                     {
-                                                        Console.WriteLine("Enter password (or 'back' to try to login with another SSN):"); // mensagem repetindo msm depois de já ter feito login
+                                                        Console.WriteLine("Enter password (or 'back' to try to login with another SSN):");
                                                         input = Console.ReadLine();
                                                         Console.Clear();
                                                         if (input.ToLower() == "back")
@@ -136,7 +136,7 @@ namespace BankAccount
                                             }
                                         }
                                     }
-                                } while (continueLogin || input.ToLower() != "exit");
+                                } while (!isLoggedIn && input.ToLower() != "exit");
                                 break;
                         }
                     } while (!isEntryValid || input.ToLower() == "exit");
@@ -197,7 +197,7 @@ namespace BankAccount
                                 {
                                     Console.WriteLine("Enter the account owner's full name:");
                                     input = Console.ReadLine();
-                                    if (!string.IsNullOrEmpty(input) && Regex.IsMatch(input, @"^[a-zA-Z\s]+$"))
+                                    if (!string.IsNullOrEmpty(input) && Regex.IsMatch(input, @"^[a-zA-ZÀ-ÿ\s]+$"))
                                     {
                                         string[] names = input.Split(' ');
                                         for (int i = 0; i < names.Length; i++)
@@ -220,13 +220,14 @@ namespace BankAccount
                                 string password = null;
                                 while (password == null)
                                 {
-                                    Console.WriteLine("Create a password:");
+                                    Console.WriteLine("Create a password: (with 8 characters, upper case, lower case, numbers and special characters)");
                                     input = Console.ReadLine();
                                     if (Regex.IsMatch(input, @"^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[^\w\s])[^\s]{8,}$"))
                                     {
                                         password = input;
-                                        Console.Clear();
-                                        Console.WriteLine("Confirm password:");
+                                        Console.SetCursorPosition(0, Console.CursorTop - 1);
+                                        Console.Write(new string('*', input.Length));
+                                        Console.WriteLine("\nConfirm password:");
                                         input = Console.ReadLine();
                                         if (input != password)
                                         {
@@ -251,11 +252,22 @@ namespace BankAccount
                                 DateTime? dateBirth = null;
                                 while (dateBirth == null)
                                 {
-                                    Console.Write("Enter your date of birth (MM/DD/YYYY):");
+                                    Console.Write("Enter the account owner's date of birth (MM/DD/YYYY):");
                                     input = Console.ReadLine();
                                     if (DateTime.TryParseExact(input, "MM/dd/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime validBirthDate))
                                     {
-                                        dateBirth = validBirthDate;
+                                        if (validBirthDate > DateTime.Now || validBirthDate < DateTime.Now.AddYears(-120))
+                                        {
+                                            dateBirth = null;
+                                            Console.Clear();
+                                            Console.WriteLine("Invalid input. Please enter a date between " + DateTime.Now.AddYears(-120).ToString("MM/dd/yyyy") + " and " + DateTime.Now.ToString("MM/dd/yyyy") + ".");
+                                            System.Threading.Thread.Sleep(2000);
+                                            Console.Clear();
+                                        }
+                                        else
+                                        {
+                                            dateBirth = validBirthDate;
+                                        }
                                     }
                                     else
                                     {
